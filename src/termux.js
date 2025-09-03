@@ -1,14 +1,13 @@
-// Initialisation de Puter
-const puter = new Puter();
+// Déclarations pour TermuxLike-PuterJS
 
 // Fonction pour afficher un message dans le terminal
-const print = (message) => {
+export const print = (message) => {
     document.getElementById('output').innerHTML += message + '<br>';
     document.getElementById('output').scrollTop = document.getElementById('output').scrollHeight;
 };
 
 // Fonction pour exécuter une commande
-async function executeCommand(cmd) {
+export async function executeCommand(cmd) {
     const args = cmd.trim().split(' ');
     const command = args[0];
     
@@ -53,7 +52,7 @@ async function executeCommand(cmd) {
 }
 
 // Liste les workers disponibles
-async function listWorkers() {
+export async function listWorkers() {
     try {
         const workers = await puter.workers.list();
         print('Commandes disponibles :');
@@ -71,17 +70,17 @@ async function listWorkers() {
 }
 
 // Ouvre la modale pour créer une commande personnalisée
-function openCustomCommandModal() {
+export function openCustomCommandModal() {
     document.getElementById('custom-command-modal').style.display = 'block';
 }
 
 // Ferme la modale
-function closeCustomCommandModal() {
+export function closeCustomCommandModal() {
     document.getElementById('custom-command-modal').style.display = 'none';
 }
 
 // Enregistre une nouvelle commande personnalisée
-async function saveCustomCommand() {
+export async function saveCustomCommand() {
     const name = document.getElementById('command-name').value.trim();
     const code = document.getElementById('command-code').value.trim();
     
@@ -103,20 +102,3 @@ async function saveCustomCommand() {
         print(`Erreur lors de la création: ${e.message}`);
     }
 }
-
-// Écouteur pour la saisie utilisateur
-document.getElementById('command').addEventListener('keypress', async (e) => {
-    if (e.key === 'Enter') {
-        const cmd = e.target.value;
-        e.target.value = '';
-        print(`$ ${cmd}`);
-        await executeCommand(cmd);
-    }
-});
-
-// Écouteurs pour la modale
-document.querySelector('.close').addEventListener('click', closeCustomCommandModal);
-document.getElementById('save-command').addEventListener('click', saveCustomCommand);
-
-// Initialisation
-print('TermuxLike - PuterJS prêt. Tapez <strong>help</strong> pour voir les commandes disponibles.');
