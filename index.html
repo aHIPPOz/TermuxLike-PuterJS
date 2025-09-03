@@ -29,6 +29,30 @@
             <button id="save-command">Enregistrer</button>
         </div>
     </div>
-    <script src="src/termux.js"></script>
+    
+    <!-- Chargement du module termux -->
+    <script type="module">
+        import { print, executeCommand, listWorkers, openCustomCommandModal, closeCustomCommandModal, saveCustomCommand } from './src/termux.js';
+        
+        // Initialisation de Puter
+        const puter = new Puter();
+        
+        // Écouteur pour la saisie utilisateur
+        document.getElementById('command').addEventListener('keypress', async (e) => {
+            if (e.key === 'Enter') {
+                const cmd = e.target.value;
+                e.target.value = '';
+                print(`$ ${cmd}`);
+                await executeCommand(cmd);
+            }
+        });
+        
+        // Écouteurs pour la modale
+        document.querySelector('.close').addEventListener('click', closeCustomCommandModal);
+        document.getElementById('save-command').addEventListener('click', saveCustomCommand);
+        
+        // Initialisation
+        print('TermuxLike - PuterJS prêt. Tapez <strong>help</strong> pour voir les commandes disponibles.');
+    </script>
 </body>
 </html>
