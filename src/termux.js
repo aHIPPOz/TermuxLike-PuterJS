@@ -2,10 +2,10 @@
 const puter = new Puter();
 
 // Fonction pour afficher un message dans le terminal
-def print(message) {
+const print = (message) => {
     document.getElementById('output').innerHTML += message + '<br>';
     document.getElementById('output').scrollTop = document.getElementById('output').scrollHeight;
-}
+};
 
 // Fonction pour exécuter une commande
 async function executeCommand(cmd) {
@@ -21,33 +21,52 @@ async function executeCommand(cmd) {
         return;
     }
     
-    // Recherche du worker correspondant
-    const workers = await puter.workers.list();
-    const workerName = `cmd_${command}`;
+    // Vérifie que Puter est bien initialisé
+    if (!puter.user) {
+        print("Erreur : Puter n'est pas initialisé. Vérifie que tu es connecté.");
+        return;
+    }
     
-    if (workers[workerName]) {
-        try {
-            const response = await fetch(`${workers[workerName].url}/api/exec?args=${encodeURIComponent(args.slice(1).join(' '))}`);
-            const result = await response.text();
-            print(result);
-        } catch (e) {
-            print(`Erreur: ${e.message}`);
+    // Recherche du worker correspondant
+    try {
+        const workers = await puter.workers.list();
+        const workerName = `cmd_${command}`;
+        
+        if (workers[workerName]) {
+            try {
+                const response = await fetch(`${workers[workerName].url}/api/exec?args=${encodeURIComponent(args.slice(1).join(' '))}`);
+                if (!response.ok) {
+                    print(`Erreur: ${response.status} - ${response.statusText}`);
+                    return;
+                }
+                const result = await response.text();
+                print(result);
+            } catch (e) {
+                print(`Erreur: ${e.message}`);
+            }
+        } else {
+            print(`Commande introuvable: ${command}`);
         }
-    } else {
-        print(`Commande introuvable: ${command}`);
+    } catch (e) {
+        print(`Erreur lors de la récupération des workers: ${e.message}`);
     }
 }
 
 // Liste les workers disponibles
 async function listWorkers() {
-    const workers = await puter.workers.list();
-    print('Commandes disponibles :');
-    
-    for (const [name, details] of Object.entries(workers)) {
-        if (name.startsWith('cmd_')) {
-            const cmdName = name.replace('cmd_', '');
-            print(`- <strong>${cmdName}</strong> (déployé le ${new Date(details.deployTime * 1000).toLocaleString()})`);
+    try {
+        const workers = await puter.workers.list();
+        print('Commandes disponibles :');
+        
+        for (const [name, details] of Object.entries(workers)) {
+            if (name.startsWith('cmd_')) {
+                const cmdName = name.replace('cmd_', '');
+                const deployDate = new Date(details.deployTime * 1000).toLocaleString();
+                print(`- <strong>${cmdName}</strong> (déployé le ${deployDate})`);
+            }
         }
+    } catch (e) {
+        print(`Erreur lors de la liste des workers: ${e.message}`);
     }
 }
 
