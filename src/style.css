@@ -127,3 +127,52 @@ body {
 #save-command:hover {
     background-color: #45a049;
 }
+
+/* Historique des commandes */
+#history {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: #2d2d2d;
+    border-radius: 5px;
+    padding: 10px;
+    max-height: 300px;
+    overflow-y: auto;
+    width: 250px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+#history h3 {
+    margin-top: 0;
+    border-bottom: 1px solid #444;
+    padding-bottom: 5px;
+}
+
+#history ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#history li {
+    padding: 5px;
+    cursor: pointer;
+    border-radius: 3px;
+}
+
+#history li:hover {
+    background-color: #3a3a3a;
+}
+
+#toggle-history {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    z-index: 1000;
+}
