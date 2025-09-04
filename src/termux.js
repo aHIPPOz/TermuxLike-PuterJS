@@ -35,13 +35,14 @@ export async function executeCommand(cmd) {
             try {
                 const response = await fetch(`${workers[workerName].url}/api/exec?args=${encodeURIComponent(args.slice(1).join(' '))}`);
                 if (!response.ok) {
-                    print(`Erreur: ${response.status} - ${response.statusText}`);
+                    const errorText = await response.text();
+                    print(`Erreur: ${response.status} - ${errorText || response.statusText}`);
                     return;
                 }
                 const result = await response.text();
                 print(result);
             } catch (e) {
-                print(`Erreur: ${e.message}`);
+                print(`Erreur lors de l'exécution: ${e.message}`);
             }
         } else {
             print(`Commande introuvable: ${command}`);
