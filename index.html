@@ -20,6 +20,16 @@
             <input type="text" id="command" autocomplete="off" autofocus>
         </div>
     </div>
+    
+    <!-- Bouton pour afficher/masquer l'historique -->
+    <button id="toggle-history">Historique</button>
+    
+    <!-- Historique des commandes -->
+    <div id="history" style="display: none;">
+        <h3>Historique des commandes</h3>
+        <ul id="history-list"></ul>
+    </div>
+    
     <div id="custom-command-modal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
@@ -37,10 +47,47 @@
         // Initialisation de Puter
         const puter = new Puter();
         
+        // Historique des commandes
+        let commandHistory = [];
+        const historyList = document.getElementById('history-list');
+        const toggleHistoryButton = document.getElementById('toggle-history');
+        const historyDiv = document.getElementById('history');
+        
+        // Basculer l'affichage de l'historique
+        toggleHistoryButton.addEventListener('click', () => {
+            historyDiv.style.display = historyDiv.style.display === 'none' ? 'block' : 'none';
+        });
+        
+        // Ajouter une commande à l'historique
+        function addToHistory(cmd) {
+            commandHistory.unshift(cmd);
+            if (commandHistory.length > 10) {
+                commandHistory.pop();
+            }
+            updateHistoryUI();
+        }
+        
+        // Mettre à jour l'UI de l'historique
+        function updateHistoryUI() {
+            historyList.innerHTML = '';
+            commandHistory.forEach(cmd => {
+                const li = document.createElement('li');
+                li.textContent = cmd;
+                li.addEventListener('click', () => {
+                    document.getElementById('command').value = cmd;
+                    historyDiv.style.display = 'none';
+                });
+                historyList.appendChild(li);
+            });
+        }
+        
         // Écouteur pour la saisie utilisateur
         document.getElementById('command').addEventListener('keypress', async (e) => {
             if (e.key === 'Enter') {
                 const cmd = e.target.value;
+                if (cmd.trim()) {
+                    addToHistory(cmd);
+                }
                 e.target.value = '';
                 print(`$ ${cmd}`);
                 await executeCommand(cmd);
